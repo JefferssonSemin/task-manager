@@ -31,7 +31,7 @@ app.post('/users', (request, response) => {
       id : v4(),
       name,
       username,
-      todo: []
+      todos: []
     }
 
     users.push(user)
@@ -42,13 +42,29 @@ app.post('/users', (request, response) => {
 app.get('/todos', checksExistsUserAccount, (request, response) => {
    const {username} = request
 
-   const {todo} = users.find((user) => user.username === username)
+   const {todos} = users.find((user) => user.username === username)
 
-   return response.json(todo)
+   return response.json(todos)
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const {username} = request
+  const {title, done, deadline} = request.body
+
+  const user = users.find((user) => user.username === username)
+  
+  const todo = {
+    id : v4(),
+    title,
+    done,
+    deadline,
+    created_at: new Date()
+  }
+
+  user.todos.push(todo)
+
+  return response.status(201).json(user)
+
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
